@@ -26,7 +26,6 @@ def formatGradeData(data, credits, result):
 	return result
 
 def check_if_new_data(old, new):
-	print(old == new)
 
 	#if(old == new):
 	# 	return 
@@ -34,8 +33,6 @@ def check_if_new_data(old, new):
 	#else:
 	old = old.split("\n\n")
 	new = new.split("\n\n")
-	print("OLD", old)
-	print("#######NEW########", new)
 
 	old_credits = old[1].split(' ')[4]
 	new_credits = new[1].split(' ')[4]
@@ -48,24 +45,20 @@ def check_if_new_data(old, new):
 		old_credits = old[i].split('\n')
 		new_credits = new[i].split('\n')
 
-		print(old_credits, new_credits)
-
 		if(old_credits[2] != new_credits[2]):
 			grade_num = new_credits[2].split(" ")[1]
-			print("You have a new grade for " + old_credits[1] + 
+			Notifier.notify("You have a new grade for " + old_credits[1] + 
 			" of " + grade_num)
 		if(old_credits[4] != new_credits[4]):
 			grade_letter = new_credits[3].split(" ")[1]
 			class_avg = new_credits[4].split(" ")[1]
 
 			if(grade_num < class_avg):
-				print("The class average for " + old_credits[1] + " was posted."
+				Notifier.notify("The class average for " + old_credits[1] + " was posted."
 					+ "You beat the class average with a " + grade_letter + ".")
 			else:
-				print("The class average for " + old_credits[1] + " was posted."
+				Notifier.notify("The class average for " + old_credits[1] + " was posted."
 					+ "You got an " + grade_letter + " in this class.")
-
-		print(old_credits[2], new_credits[2])
 
 def check_past_data(data):
 
@@ -159,8 +152,6 @@ def main():
 	credit_data = credit_data_parent.find_elements_by_tag_name("td")[0].text
 
 	data = ''
-
-	print(save)
 
 	if(save == 'y'):
 		data += str(studentId) + ' ' + str(pin) + '\n\n'
