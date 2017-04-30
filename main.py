@@ -44,11 +44,28 @@ def check_if_new_data(old, new):
 	#	return
 
 	#else:
-	for i in range(2, len(old_credits)):
+	for i in range(2, len(old) - 1):
 		old_credits = old[i].split('\n')
 		new_credits = new[i].split('\n')
 
 		print(old_credits, new_credits)
+
+		if(old_credits[2] != new_credits[2]):
+			grade_num = new_credits[2].split(" ")[1]
+			print("You have a new grade for " + old_credits[1] + 
+			" of " + grade_num)
+		if(old_credits[4] != new_credits[4]):
+			grade_letter = new_credits[3].split(" ")[1]
+			class_avg = new_credits[4].split(" ")[1]
+
+			if(grade_num < class_avg):
+				print("The class average for " + old_credits[1] + " was posted."
+					+ "You beat the class average with a " + grade_letter + ".")
+			else:
+				print("The class average for " + old_credits[1] + " was posted."
+					+ "You got an " + grade_letter + " in this class.")
+
+		print(old_credits[2], new_credits[2])
 
 def check_past_data(data):
 
