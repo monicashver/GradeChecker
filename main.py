@@ -1,8 +1,13 @@
 from selenium import webdriver
-from pync import Notifier
 import time
 import sys
 import os
+
+def notify(title, text):
+    os.system("""
+              osascript -e 'display notification "{}" with title "{}"'
+              """.format(text, title))
+
 
 def formatGradeData(data, credits, result):
 
@@ -46,19 +51,22 @@ def check_if_new_data(old, new):
 		new_credits = new[i].split('\n')
 
 		if(old_credits[2] != new_credits[2]):
+
 			grade_num = new_credits[2].split(" ")[1]
-			Notifier.notify("You have a new grade for " + old_credits[1] + 
-			" of " + grade_num)
+			notify("Grade Update", "You have a new grade for " + old_credits[1] + 
+			" of " + grade_num + "%")
+
 		if(old_credits[4] != new_credits[4]):
+
 			grade_letter = new_credits[3].split(" ")[1]
 			class_avg = new_credits[4].split(" ")[1]
 
 			if(grade_num < class_avg):
-				Notifier.notify("The class average for " + old_credits[1] + " was posted."
-					+ "You beat the class average with a " + grade_letter + ".")
+				notify("Grade Update", "The class average for " + old_credits[1] + " was posted."
+					+ "You beat the class average with a " + grade_letter + ".", )
 			else:
-				Notifier.notify("The class average for " + old_credits[1] + " was posted."
-					+ "You got an " + grade_letter + " in this class.")
+				notify("Grade Update", "The class average for " + old_credits[1] + " was posted."
+					+ "You got an " + grade_letter + " in this class.", )
 
 def check_past_data(data):
 
