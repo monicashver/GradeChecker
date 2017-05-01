@@ -2,11 +2,10 @@ from selenium import webdriver
 import time
 import sys
 import os
+import subprocess
 
 def notify(title, text):
-    os.system("""
-              osascript -e 'display notification "{}" with title "{}"'
-              """.format(text, title))
+    subprocess.Popen(['notify-send', text])
 
 
 def formatGradeData(data, credits, result):
@@ -29,6 +28,26 @@ def formatGradeData(data, credits, result):
 		result += "\n\n"
 
 	return result
+
+def create_data(data):
+	new = data.split("\n\n")
+	for i in range(2, len(new) - 1):
+		new_credits = new[i].split('\n')
+		grade_num = new_credits[2].split(" ")[1]
+		if grade_num:
+			notify("Grade Update", "You have a new grade for " + new_credits[1] + 
+			" of " + grade_num + "%")
+
+		grade_letter = new_credits[3].split(" ")[1]
+		class_avg = new_credits[4].split(" ")[1]
+		if class_avg:
+			if(grade_num < class_avg):
+				notify("Grade Update", "The class average for " + new_credits[1] + " was posted."
+					+ "You beat the class average with a " + grade_letter + ".", )
+			else:
+				notify("Grade Update", "The class average for " + new_credits[1] + " was posted."
+					+ "You got an " + grade_letter + " in this class.", )
+
 
 def check_if_new_data(old, new):
 
@@ -80,10 +99,11 @@ def check_past_data(data):
 
 def get_pin():
 
-	pin = int(input("Please type in your pin: "))
+	pin = str(raw_input("Please type in your pin: "))
 
-	while(pin >= 999999 or pin < 100000):
-		pin = input("Please type in your pin: ")
+	while(len(pin) != 6):
+		print("Pin is not the correct length")
+		pin = str(raw_input("Please type in your pin: "))
 
 	return pin
 
@@ -118,8 +138,7 @@ def main():
 
 		studentId = get_id()
 		pin = get_pin()
-
-		if(file_exists == False):
+		if not file_exists:
 			save = raw_input("Would you like me to remember your credientials?: (y/n)")
 			save = save.strip()
 
@@ -189,8 +208,11 @@ def main():
 
 	data = formatGradeData(grades, credit_data, data)
 
-	check_if_new_data(past_data, data)
-
+	if not past_data:
+		create_data(data)
+	else:
+		check_if_new_data(past_data, data)
+		
 	f = open('workfile.txt', 'w')
 	f.write(data)
 	f.close()
