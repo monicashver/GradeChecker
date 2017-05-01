@@ -30,6 +30,19 @@ def formatGradeData(data, credits, result):
 
 	return result
 
+def print_curr_data(data):
+
+	credits = data.split("\n\n")
+	grade_data = ""
+	for i in range(2, len(credits) - 1):
+		print(credits[i])
+		grade = credits[i].split('\n')
+		grade_num = grade[2].split(" ")[1]
+		if(grade_num != "IPR"):
+			grade_data += "You have grade " + grade_num + "% for " + grade[0] + "\n"
+
+	notify("Current Grade Data", grade_data)
+
 def check_if_new_data(old, new):
 
 	if(old == new):
@@ -85,7 +98,7 @@ def get_pin():
 	pin = int(input("Please type in your pin: "))
 
 	while(pin >= 999999 or pin < 100000):
-		pin = input("Please type in your pin: ")
+		pin = input("Please enter a valid pin: ")
 
 	return pin
 
@@ -94,7 +107,7 @@ def get_id():
 	studentId = input("Please type in your student number: ")
 
 	while(studentId <= 99999999 or studentId > 9999999999):
-		studentId = input("Please type in your student number: ")
+		studentId = input("Invalid student number. Please try again: ")
 
 	return studentId
 
@@ -127,7 +140,7 @@ def main():
 			save = save.strip()
 
 		while(save != 'y' and save != 'n'):
-			save = raw_input("Please enter a valid command. sWould you like me to remember your credientials?: (y/n)")
+			save = raw_input("Please enter a valid command. Would you like me to remember your credientials?: (y/n)")
 			save = save.strip()
 
 	#function calls to scrape the data
@@ -192,7 +205,10 @@ def main():
 
 	data = formatGradeData(grades, credit_data, data)
 
-	check_if_new_data(past_data, data)
+	if(file_exists):
+		check_if_new_data(past_data, data)
+	else:
+		print_curr_data(data)
 
 	f = open('workfile.txt', 'w')
 	f.write(data)
