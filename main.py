@@ -2,11 +2,10 @@ from selenium import webdriver
 import time
 import sys
 import os
+import subprocess
 
 def notify(title, text):
-    os.system("""
-              osascript -e 'display notification "{}" with title "{}"'
-              """.format(text, title))
+    subprocess.Popen(['notify-send', text])
 
 
 def formatGradeData(data, credits, result):
@@ -35,6 +34,7 @@ def create_data(data):
 	for i in range(2, len(new) - 1):
 		new_credits = new[i].split('\n')
 		grade_num = new_credits[2].split(" ")[1]
+		print("Test" + grade_num + "Test")
 		notify("Grade Update", "You have a new grade for " + new_credits[1] + 
 		" of " + grade_num + "%")
 
