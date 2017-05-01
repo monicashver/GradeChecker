@@ -78,6 +78,24 @@ def check_past_data(data):
 
 	return None, False
 
+def get_pin():
+
+	pin = int(input("Please type in your pin: "))
+
+	while(pin >= 999999 or pin < 100000):
+		pin = input("Please type in your pin: ")
+
+	return pin
+
+def get_id():
+
+	studentId = input("Please type in your student number: ")
+
+	while(studentId <= 99999999 or studentId > 9999999999):
+		studentId = input("Please type in your student number: ")
+
+	return studentId
+
 def main():
 
 	filename = 'workfile.txt'
@@ -98,24 +116,15 @@ def main():
 		
 	else:
 
-		studentId = input("Please type in your student number: ")
+		studentId = get_id()
+		pin = get_pin()
 
-		while(studentId <= 99999999 or studentId > 9999999999):
-			studentId = input("Please type in your student number: ")
-
-		pin = int(input("Please type in your pin: "))
-
-		while(pin >= 999999 or pin < 100000):
-			pin = input("Please type in your pin: ")
-
-		#if the file exists we already asked the user if they want to save
-		#credentials, don't ask again
 		if(file_exists == False):
 			save = raw_input("Would you like me to remember your credientials?: (y/n)")
 			save = save.strip()
 
-		if(save != 'y' and save != 'n'):
-			save = raw_input("Would you like me to remember your credientials?: (y/n)")
+		while(save != 'y' and save != 'n'):
+			save = raw_input("Please enter a valid command. sWould you like me to remember your credientials?: (y/n)")
 			save = save.strip()
 
 	#function calls to scrape the data
@@ -133,7 +142,21 @@ def main():
 
 	browser.find_element_by_xpath("//*[@type='submit'][@value='Login']").click()
 
-	browser.find_element_by_link_text("Transcripts, Academic History").click()
+	try:
+		browser.find_element_by_link_text("Transcripts, Academic History").click()
+	except:
+		print("Looks like your student number or pin is invalid please re-enter them.")
+		studentId = get_id()
+		pin = get_pin()
+		print(studentId, pin)
+		element = browser.find_element_by_name("personId")
+		element.send_keys("")
+		element.send_keys(studentId)
+
+		element = browser.find_element_by_name("pin")
+		element.send_keys(pin)
+
+		browser.find_element_by_xpath("//*[@type='submit'][@value='Login']").click()
 
 
 	#status0 for first semester
