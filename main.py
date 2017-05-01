@@ -34,19 +34,19 @@ def create_data(data):
 	for i in range(2, len(new) - 1):
 		new_credits = new[i].split('\n')
 		grade_num = new_credits[2].split(" ")[1]
-		print("Test" + grade_num + "Test")
-		notify("Grade Update", "You have a new grade for " + new_credits[1] + 
-		" of " + grade_num + "%")
+		if grade_num:
+			notify("Grade Update", "You have a new grade for " + new_credits[1] + 
+			" of " + grade_num + "%")
 
 		grade_letter = new_credits[3].split(" ")[1]
 		class_avg = new_credits[4].split(" ")[1]
-
-		if(grade_num < class_avg):
-			notify("Grade Update", "The class average for " + new_credits[1] + " was posted."
-				+ "You beat the class average with a " + grade_letter + ".", )
-		else:
-			notify("Grade Update", "The class average for " + new_credits[1] + " was posted."
-				+ "You got an " + grade_letter + " in this class.", )
+		if class_avg:
+			if(grade_num < class_avg):
+				notify("Grade Update", "The class average for " + new_credits[1] + " was posted."
+					+ "You beat the class average with a " + grade_letter + ".", )
+			else:
+				notify("Grade Update", "The class average for " + new_credits[1] + " was posted."
+					+ "You got an " + grade_letter + " in this class.", )
 
 
 def check_if_new_data(old, new):
