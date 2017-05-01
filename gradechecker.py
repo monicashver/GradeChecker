@@ -32,35 +32,37 @@ def formatGradeData(data, credits, result):
 
 def check_if_new_data(old, new):
 
-	#if(old == new):
-	# 	return 
+	if(old == new):
+	 	return 
 
-	#else:
 	old = old.split("\n\n")
 	new = new.split("\n\n")
 
 	old_credits = old[1].split(' ')[4]
 	new_credits = new[1].split(' ')[4]
 
-	#if(float(old_credits) == float(new_credits)):
-	#	return
+	#no new credits accrewed
+	if(float(old_credits) == float(new_credits)):
+		return
 
-	#else:
 	for i in range(2, len(old) - 1):
 		old_credits = old[i].split('\n')
 		new_credits = new[i].split('\n')
 
+		#Grade number
 		if(old_credits[2] != new_credits[2]):
 
 			grade_num = new_credits[2].split(" ")[1]
 			notify("Grade Update", "You have a new grade for " + old_credits[1] + 
 			" of " + grade_num + "%")
 
+		#average
 		if(old_credits[4] != new_credits[4]):
 
 			grade_letter = new_credits[3].split(" ")[1]
 			class_avg = new_credits[4].split(" ")[1]
 
+			#cool message if you beat class average
 			if(grade_num < class_avg):
 				notify("Grade Update", "The class average for " + old_credits[1] + " was posted."
 					+ "You beat the class average with a " + grade_letter + ".", )
@@ -102,6 +104,7 @@ def main():
 	past_data = ''
 	file_exists = False
 	save = 'n'
+
 	if(os.path.isfile(filename)):
 		f = open(filename, 'r')
 		past_data = f.read()
@@ -109,13 +112,13 @@ def main():
 		file_exists = True
 
 	credentials, saved = check_past_data(past_data)
+
 	if(saved):
 		studentId = credentials[0]
 		pin = credentials[1]
 		save = 'y'
 		
 	else:
-
 		studentId = get_id()
 		pin = get_pin()
 
@@ -142,13 +145,13 @@ def main():
 
 	browser.find_element_by_xpath("//*[@type='submit'][@value='Login']").click()
 
+	#half ass error checking to finish
 	try:
 		browser.find_element_by_link_text("Transcripts, Academic History").click()
 	except:
 		print("Looks like your student number or pin is invalid please re-enter them.")
 		studentId = get_id()
 		pin = get_pin()
-		print(studentId, pin)
 		element = browser.find_element_by_name("personId")
 		element.send_keys("")
 		element.send_keys(studentId)
@@ -168,7 +171,7 @@ def main():
 	children = parent.find_elements_by_tag_name("tr")
 
 	grades = []
-
+	print("ok")
 	for i in range(1, len(children) - 2):
 		data = children[i].find_elements_by_tag_name("td")
 		class_name = data[0].text
@@ -200,4 +203,9 @@ def main():
 
 
 if __name__ == '__main__':
-	main()
+
+
+	while True:
+		main()
+		time.sleep(900) #repeat every 15 min
+
