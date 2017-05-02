@@ -9,7 +9,7 @@ def notify(title, text):
               """.format(text, title))
 
 
-def formatGradeData(data, credits, result):
+def format_grade_data(data, credits, result):
 
 	credits = credits.split(" ")
 
@@ -34,12 +34,21 @@ def print_curr_data(data):
 
 	credits = data.split("\n\n")
 	grade_data = ""
+	
 	for i in range(2, len(credits) - 1):
-		print(credits[i])
+
 		grade = credits[i].split('\n')
 		grade_num = grade[2].split(" ")[1]
-		if(grade_num != "IPR"):
-			grade_data += "You have grade " + grade_num + "% for " + grade[0] + "\n"
+
+		class_data = []
+
+		if(i == 0):
+			class_data = grade[0].split(" ")
+		else: 
+			class_data = grade[1].split(" ")
+
+		if(grade_num != "IPR" and grade_num != ""):
+			grade_data += "You have grade " + grade_num + "% for " + class_data[1] + "\n"
 
 	notify("Current Grade Data", grade_data)
 
@@ -184,7 +193,7 @@ def main():
 	children = parent.find_elements_by_tag_name("tr")
 
 	grades = []
-	print("ok")
+
 	for i in range(1, len(children) - 2):
 		data = children[i].find_elements_by_tag_name("td")
 		class_name = data[0].text
@@ -203,7 +212,7 @@ def main():
 	if(save == 'y'):
 		data += str(studentId) + ' ' + str(pin) + '\n\n'
 
-	data = formatGradeData(grades, credit_data, data)
+	data = format_grade_data(grades, credit_data, data)
 
 	if(file_exists):
 		check_if_new_data(past_data, data)
