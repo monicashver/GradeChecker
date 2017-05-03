@@ -158,20 +158,22 @@ def main():
 	browser.find_element_by_xpath("//*[@type='submit'][@value='Login']").click()
 
 	#half ass error checking to finish
-	try:
-		browser.find_element_by_link_text("Transcripts, Academic History").click()
-	except:
-		print("Looks like your student number or pin is invalid please re-enter them.")
-		studentId = get_id()
-		pin = get_pin()
-		element = browser.find_element_by_name("personId")
-		element.send_keys("")
-		element.send_keys(studentId)
+	while True:
+		try:
+			browser.find_element_by_link_text("Transcripts, Academic History").click()
+			break
+		except:
+			print("Looks like your student number or pin is invalid please re-enter them.")
+			studentId = get_id()
+			pin = get_pin()
+			element = browser.find_element_by_name("personId")
+			element.send_keys("")
+			element.send_keys(studentId)
 
-		element = browser.find_element_by_name("pin")
-		element.send_keys(pin)
+			element = browser.find_element_by_name("pin")
+			element.send_keys(pin)
 
-		browser.find_element_by_xpath("//*[@type='submit'][@value='Login']").click()
+			browser.find_element_by_xpath("//*[@type='submit'][@value='Login']").click()
 
 
 	#status0 for first semester
