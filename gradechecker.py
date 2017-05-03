@@ -2,11 +2,10 @@ from selenium import webdriver
 import time
 import sys
 import os
+import subprocess
 
 def notify(title, text):
-    os.system("""
-              osascript -e 'display notification "{}" with title "{}"'
-              """.format(text, title))
+    subprocess.Popen(['notify-send', text])
 
 
 def format_grade_data(data, credits, result):
@@ -39,7 +38,7 @@ def print_curr_data(data):
 
 		grade = credits[i].split('\n')
 		grade_num = grade[2].split(" ")[1]
-
+    
 		class_data = []
 
 		if(i == 0):
@@ -104,9 +103,10 @@ def check_past_data(data):
 
 def get_pin():
 
-	pin = int(input("Please type in your pin: "))
+	pin = str(raw_input("Please type in your pin: "))
 
-	while(pin >= 999999 or pin < 100000):
+	while(len(pin) != 6):
+		print("Pin is not the correct length")
 		pin = input("Please enter a valid pin: ")
 
 	return pin
@@ -143,8 +143,7 @@ def main():
 	else:
 		studentId = get_id()
 		pin = get_pin()
-
-		if(file_exists == False):
+		if not file_exists:
 			save = raw_input("Would you like me to remember your credientials?: (y/n)")
 			save = save.strip()
 
@@ -168,20 +167,22 @@ def main():
 	browser.find_element_by_xpath("//*[@type='submit'][@value='Login']").click()
 
 	#half ass error checking to finish
-	try:
-		browser.find_element_by_link_text("Transcripts, Academic History").click()
-	except:
-		print("Looks like your student number or pin is invalid please re-enter them.")
-		studentId = get_id()
-		pin = get_pin()
-		element = browser.find_element_by_name("personId")
-		element.send_keys("")
-		element.send_keys(studentId)
+	while True:
+		try:
+			browser.find_element_by_link_text("Transcripts, Academic History").click()
+			break
+		except:
+			print("Looks like your student number or pin is invalid please re-enter them.")
+			studentId = get_id()
+			pin = get_pin()
+			element = browser.find_element_by_name("personId")
+			element.send_keys("")
+			element.send_keys(studentId)
 
-		element = browser.find_element_by_name("pin")
-		element.send_keys(pin)
+			element = browser.find_element_by_name("pin")
+			element.send_keys(pin)
 
-		browser.find_element_by_xpath("//*[@type='submit'][@value='Login']").click()
+			browser.find_element_by_xpath("//*[@type='submit'][@value='Login']").click()
 
 
 	#status0 for first semester
@@ -213,6 +214,7 @@ def main():
 		data += str(studentId) + ' ' + str(pin) + '\n\n'
 
 	data = format_grade_data(grades, credit_data, data)
+
 
 	if(file_exists):
 		check_if_new_data(past_data, data)
