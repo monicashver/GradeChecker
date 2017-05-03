@@ -38,7 +38,7 @@ def print_curr_data(data):
 		grade = credits[i].split('\n')
 		grade_num = grade[2].split(" ")[1]
 		if(grade_num != "IPR"):
-			grade_data += "You have grade " + grade_num + "% for " + grade[0] + "\n"
+			grade_data += "You have grade " + grade_num + "% for " + grade[1] + "\n"
 
 	notify("Current Grade Data", grade_data)
 
