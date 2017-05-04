@@ -1,5 +1,6 @@
 from selenium import webdriver
 import time
+import datetime
 import sys
 import os
 import subprocess
@@ -120,12 +121,30 @@ def get_id():
 
 	return studentId
 
+def get_time():
+
+	#getting time
+	time = datetime.datetime.now().time()
+
+	seconds = ''
+	if(time.minute < 10):
+		seconds = '0' + str(time.minute)
+	else:
+		seconds = str(time.minute)
+	return "Ok. Time:" + str(time.hour) + ":" + seconds
+
 def main():
 
+	# default variables
 	filename = 'workfile.txt'
 	past_data = ''
+
+	# by default assume the past_data file doesn't exist
+	# assume user doesn't want credentials saved
+	# assumer we are looking at semester1 
 	file_exists = False
 	save = 'n'
+	semester = "status1" #first block of grades aka semester 1
 
 	if(os.path.isfile(filename)):
 		f = open(filename, 'r')
@@ -166,7 +185,7 @@ def main():
 
 	browser.find_element_by_xpath("//*[@type='submit'][@value='Login']").click()
 
-	#half ass error checking to finish
+	#try to login - if failed ask user to reenter recreditions
 	while True:
 		try:
 			browser.find_element_by_link_text("Transcripts, Academic History").click()
@@ -188,7 +207,7 @@ def main():
 	#status0 for first semester
 
 	#Get parent element
-	parent = browser.find_element_by_id("status1")
+	parent = browser.find_element_by_id(semester)
 
 	#Get all children elements of the parent element
 	children = parent.find_elements_by_tag_name("tr")
@@ -215,19 +234,22 @@ def main():
 
 	data = format_grade_data(grades, credit_data, data)
 
-
+	# if this is first time just save data and print out all current grades
+	# if this isn't the first time - compare to past data to see if there are any updates
 	if(file_exists):
 		check_if_new_data(past_data, data)
 	else:
 		print_curr_data(data)
 
+	#write data to file and quit browser
 	f = open('workfile.txt', 'w')
 	f.write(data)
 	f.close()
 
 	browser.quit()
 
-
+	#print out time of query
+	print(get_time())
 
 if __name__ == '__main__':
 
