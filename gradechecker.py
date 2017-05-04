@@ -6,8 +6,7 @@ import os
 import subprocess
 
 def notify(title, text):
-    subprocess.Popen(['notify-send', text])
-
+	subprocess.Popen(['notify-send', "ok"], shell=True)
 
 def format_grade_data(data, credits, result):
 
@@ -147,6 +146,7 @@ def main():
 	# default variables
 	filename = 'workfile.txt'
 	past_data = ''
+	total_FCEs = 0
 
 	# by default assume the past_data file doesn't exist
 	# assume user doesn't want credentials saved
@@ -232,6 +232,7 @@ def main():
 			continue
 		class_name = data[0].text
 		weight = data[1].text
+		#print(weight)
 		mark = data[2].text
 		grade = data[3].text
 		average = data[4].text
