@@ -216,6 +216,11 @@ def main():
 
 	for i in range(1, len(children) - 2):
 		data = children[i].find_elements_by_tag_name("td")
+
+		#if student wants grades for an already completed semester
+		#can use this to get GPA
+		if(len(data) < 5):
+			continue
 		class_name = data[0].text
 		weight = data[1].text
 		mark = data[2].text
