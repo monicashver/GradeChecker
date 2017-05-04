@@ -6,7 +6,11 @@ import os
 import subprocess
 
 def notify(title, text):
-	subprocess.Popen(['notify-send', "ok"], shell=True)
+    os.system("""
+              osascript -e 'display notification "{}" with title "{}"'
+              """.format(text, title))
+
+
 
 def format_grade_data(data, credits, result):
 
@@ -86,10 +90,10 @@ def check_if_new_data(old, new):
 			#cool message if you beat class average
 			if(grade_num < class_avg):
 				notify("Grade Update", "The class average for " + old_credits[1] + " was posted."
-					+ "You beat the class average with a " + grade_letter + ".", )
+					+ "You beat the class average with a " + grade_letter + ".")
 			else:
 				notify("Grade Update", "The class average for " + old_credits[1] + " was posted."
-					+ "You got an " + grade_letter + " in this class.", )
+					+ "You got an " + grade_letter + " in this class.")
 
 def check_past_data(data):
 
@@ -271,5 +275,5 @@ if __name__ == '__main__':
 
 	while True:
 		main()
-		time.sleep(900) #repeat every 15 min
+		time.sleep(10) #repeat every 15 min
 
