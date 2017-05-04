@@ -192,17 +192,22 @@ def main():
 	#function calls to scrape the data
 	url = "https://degreeexplorer.utoronto.ca/degreeExplorer/login.xhtml"
 
-	browser = webdriver.Chrome()
+	while True:
+		try:
+			browser = webdriver.Chrome()
+			browser.get("https://sws.rosi.utoronto.ca")
 
-	browser.get("https://sws.rosi.utoronto.ca")
+			element = browser.find_element_by_name("personId")
+			element.send_keys(studentId)
 
-	element = browser.find_element_by_name("personId")
-	element.send_keys(studentId)
+			element = browser.find_element_by_name("pin")
+			element.send_keys(pin)
 
-	element = browser.find_element_by_name("pin")
-	element.send_keys(pin)
-
-	browser.find_element_by_xpath("//*[@type='submit'][@value='Login']").click()
+			browser.find_element_by_xpath("//*[@type='submit'][@value='Login']").click()
+			break
+		except:
+			browser.quit()
+			raw_input("Looks like your computer maybe offline. Press Enter to try again.")
 
 	#try to login - if failed ask user to reenter recreditions
 	while True:
