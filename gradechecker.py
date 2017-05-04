@@ -121,6 +121,15 @@ def get_id():
 
 	return studentId
 
+def get_semester():
+
+	semester = str(raw_input("Which semester did you want me to check for your grades? (F/W): ")).upper()
+
+	while (semester != "F" and semester != "W"):
+		semester = str(raw_input("Invalid semester code. Please enter a valid semester code (F/W): "))
+
+	return semester
+
 def get_time():
 
 	#getting time
@@ -144,7 +153,9 @@ def main():
 	# assumer we are looking at semester1 
 	file_exists = False
 	save = 'n'
-	semester = "status1" #first block of grades aka semester 1
+
+	#Fall = status0, Winter = status1
+	semester = "status0" if get_semester() == "F" else "status1"
 
 	if(os.path.isfile(filename)):
 		f = open(filename, 'r')
@@ -203,8 +214,6 @@ def main():
 
 			browser.find_element_by_xpath("//*[@type='submit'][@value='Login']").click()
 
-
-	#status0 for first semester
 
 	#Get parent element
 	parent = browser.find_element_by_id(semester)
