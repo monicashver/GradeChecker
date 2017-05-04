@@ -66,10 +66,6 @@ def check_if_new_data(old, new):
 	old_credits = old[1].split(' ')[4]
 	new_credits = new[1].split(' ')[4]
 
-	#no new credits accrewed
-	if(float(old_credits) == float(new_credits)):
-		return
-
 	for i in range(2, len(old) - 1):
 		old_credits = old[i].split('\n')
 		new_credits = new[i].split('\n')
@@ -100,28 +96,34 @@ def check_past_data(data):
 	results = data.split('\n')
 	credentials = results[0].split(" ")
 
-	if(len(credentials) == 2):
+	if(len(credentials) == 3):
 		return credentials, True
 
 	return None, False
 
 def get_pin():
 
-	pin = str(raw_input("Please type in your pin: "))
+	pin = raw_input("Please type in your pin: ")
 
 	while(len(pin) != 6):
 		print("Pin is not the correct length")
-		pin = input("Please enter a valid pin: ")
+		pin = raw_input("Please enter a valid pin: ")
 
 	return pin
 
 def get_id():
 
-	studentId = input("Please type in your student number: ")
+	studentId = raw_input("Please type in your student number: ")
+
+	if(studentId.isdigit()):
+		studentId = int(studentId)
 
 	while(studentId <= 99999999 or studentId > 9999999999):
-		studentId = input("Invalid student number. Please try again: ")
+		studentId = raw_input("Invalid student number. Please try again: ")
 
+		if(studentId.isdigit()):
+			studentId = int(studentId)
+			
 	return studentId
 
 def get_semester():
@@ -131,6 +133,7 @@ def get_semester():
 	while (semester != "F" and semester != "W"):
 		semester = str(raw_input("Invalid semester code. Please enter a valid semester code (F/W): "))
 
+	semester = "status0" if semester == "F" else "status1"
 	return semester
 
 def get_time():
@@ -151,7 +154,7 @@ def main():
 	filename = 'workfile.txt'
 	past_data = ''
 	total_FCEs = 0
-
+	saved = False
 	# by default assume the past_data file doesn't exist
 	# assume user doesn't want credentials saved
 	# assumer we are looking at semester1 
@@ -159,31 +162,32 @@ def main():
 	save = 'n'
 
 	#Fall = status0, Winter = status1
-	semester = "status0" if get_semester() == "F" else "status1"
+	semester = "status0"
 
 	if(os.path.isfile(filename)):
 		f = open(filename, 'r')
 		past_data = f.read()
 		f.close()
 		file_exists = True
-
-	credentials, saved = check_past_data(past_data)
+		credentials, saved = check_past_data(past_data)
 
 	if(saved):
 		studentId = credentials[0]
 		pin = credentials[1]
+		semester = "status0" if credentials[2] == "F" else "status1"
 		save = 'y'
 		
 	else:
 		studentId = get_id()
 		pin = get_pin()
+		semester = get_semester()
 		if not file_exists:
-			save = raw_input("Would you like me to remember your credientials?: (y/n)")
+			save = raw_input("Would you like me to remember your credientials?: (y/n) ")
 			save = save.strip()
 
-		while(save != 'y' and save != 'n'):
-			save = raw_input("Please enter a valid command. Would you like me to remember your credientials?: (y/n)")
-			save = save.strip()
+			while(save != 'y' and save != 'n'):
+				save = raw_input("Please enter a valid command. Would you like me to remember your credientials?: (y/n) ")
+				save = save.strip()
 
 	#function calls to scrape the data
 	url = "https://degreeexplorer.utoronto.ca/degreeExplorer/login.xhtml"
@@ -206,7 +210,7 @@ def main():
 			browser.find_element_by_link_text("Transcripts, Academic History").click()
 			break
 		except:
-			print("Looks like your student number or pin is invalid please re-enter them.")
+			print("Looks like your student number or pin is invalid. Please re-enter them.")
 			studentId = get_id()
 			pin = get_pin()
 			element = browser.find_element_by_name("personId")
@@ -249,7 +253,8 @@ def main():
 	data = ''
 
 	if(save == 'y'):
-		data += str(studentId) + ' ' + str(pin) + '\n\n'
+		sem = "F" if semester == "status0" else "W"
+		data += str(studentId) + ' ' + str(pin) + " " + sem + '\n\n'
 
 	data = format_grade_data(grades, credit_data, data)
 
@@ -275,5 +280,5 @@ if __name__ == '__main__':
 
 	while True:
 		main()
-		time.sleep(10) #repeat every 15 min
+		time.sleep(900) #repeat every 15 min
 
